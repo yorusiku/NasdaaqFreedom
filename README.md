@@ -6,7 +6,7 @@
 
 ## 설계도
 
-**→ [시스템 설계도 v2](https://github.io/yorusiku/NasdaaqFreedom/)**
+**→ [시스템 설계도 v2](https://github.com/yorusiku/NasdaaqFreedom/)**
 
 전체 설계가 이 문서 한 장에 들어 있다. 데이터 출처 선택 근거, 아키텍처, 기능별 판정 로직, 화면, 비용, 구현 순서, 리스크. 구현하다 "왜 이렇게 했더라"가 생기면 여기부터 본다.
 
