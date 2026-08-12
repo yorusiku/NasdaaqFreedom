@@ -1,4 +1,4 @@
-# morning-brief
+# NasdaaqFreedom
 
 미국장 마감 3시간 뒤, 관심 종목만 정리해서 보내는 개인용 브리핑 시스템.
 
@@ -6,7 +6,7 @@
 
 ## 설계도
 
-**→ [시스템 설계도 v2](https://yorusiku.github.io/NasdaaqFreedom/)**
+**→ [시스템 설계도](https://yorusiku.github.io/NasdaaqFreedom/)**
 
 전체 설계가 이 문서 한 장에 들어 있다. 데이터 출처 선택 근거, 아키텍처, 기능별 판정 로직, 화면, 비용, 구현 순서, 리스크. 구현하다 "왜 이렇게 했더라"가 생기면 여기부터 본다.
 
@@ -27,11 +27,14 @@
 
 | 소스 | 용도 | 키 | 비고 |
 |---|---|---|---|
-| Polygon | 시세·거래량·섹터 ETF | 필요 | grouped daily bars — 하루 1콜로 전체 |
+| Massive | 시세·거래량·섹터 ETF | 필요 | grouped daily bars — 하루 1콜로 전체 |
 | SEC EDGAR | 8-K·10-K/Q·DEF 14A | 불필요 | User-Agent 헤더 필수, 초당 10요청 |
+| Massive SEC (beta) | 8-K 이벤트 분류 | 필요 | 전 계정 개방, 정책 변경 가능 → EDGAR 폴백 유지 |
 | FRED | 매크로 릴리스 일정 | 필요 | CPI·PPI·고용·FOMC |
 | Finnhub | 실적 캘린더·뉴스 | 필요 | 유일하게 유료화 위험이 있는 지점 |
 | Anthropic | 원인 요약 | 필요 | 규칙 필터 통과분만 호출 |
+
+Massive는 Polygon.io의 새 이름이다(2025-10-30). 신규 코드는 `api.massive.com`을 쓴다.
 
 **비공식 엔드포인트는 쓰지 않는다.** 로빈후드·Investing.com은 공개 주식 API가 없고, 리버스 엔지니어링한 래퍼는 약관 위반에 계정 정지 위험까지 따른다. 같은 데이터를 정식 경로로 받을 수 있으므로 실익도 없다.
 
@@ -44,11 +47,11 @@ TypeScript / Node 22 · zod(스키마) · Temporal 또는 date-fns-tz(시간대)
 ## 구조
 
 ```
-morning-brief/
+NasdaaqFreedom/
 ├── docs/index.html        설계도 (GitHub Pages 진입점)
 ├── src/
 │   ├── config.ts          관심종목 · 섹터 매핑
-│   ├── clients/           polygon · sec · fred · finnhub
+│   ├── clients/           massive · sec · fred · finnhub
 │   ├── collect/           수집
 │   ├── analyze/           규칙 판정 → LLM
 │   ├── render/            HTML · 텍스트
@@ -77,7 +80,7 @@ npm run dev              # 로컬 1회 실행
 
 ## 상태
 
-설계 완료, 구현 착수 전. 진행 순서는 설계도의 "구현 순서" 섹션 참고.
+설계 완료, 구현 착수 전. 다음 할 일은 설계도의 **0단계 가정 검증** — grouped bars가 07:40 KST에 준비되는지, SEC submissions 반영 지연이 얼마인지, 실적 캘린더가 무료로 열리는지 확인.
 
 ---
 
